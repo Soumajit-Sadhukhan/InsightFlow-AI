@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-97-ayrz=!su6e=k2&nh#muswntu6e6g_27t0$it+wwakfxa_vs'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -37,9 +39,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Third Party Apps
+    "rest_framework",
+    'corsheaders',
+    "drf_spectacular",
+    
+    
+    # Local Apps
+    "core",
+    "users",
+    "projects",
+    "datasets",
+    "ml_models",
+    "predictions",
+    "reports",
+    "ai_assistant",
+    "automation",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",#add
+    
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -119,3 +141,41 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+# DJANGO REST FRAMEWORK
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+# JWT
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
+
+# CORS
+CORS_ALLOWED_ORIGINS = [
+
+    "http://localhost:3000",
+
+]
+
+# SWAGGER
+
+SPECTACULAR_SETTINGS = {
+
+    "TITLE": "InsightFlow AI API",
+
+    "DESCRIPTION": "Production Ready AI Powered Data Science Platform",
+
+    "VERSION": "1.0.0",
+
+}
+# DEFAULT PRIMARY KEY
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
