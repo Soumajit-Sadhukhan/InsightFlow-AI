@@ -4,6 +4,8 @@ from .models import User
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
+import random
+
 #serializers convard json
 class RegisterSerializer(serializers.ModelSerializer):
     

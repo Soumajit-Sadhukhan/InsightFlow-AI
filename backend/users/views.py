@@ -4,6 +4,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 
 # serializers
@@ -67,4 +68,22 @@ class LoginView(APIView):
                 "error": serializer.errors
             },
             status=status.HTTP_400_BAD_REQUEST
+        )
+        
+        
+# profile
+class ProfileView(APIView):
+    
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        
+        serializer = RegisterSerializer(request.user)
+        
+        return Response(
+            {
+                "status": "success",
+                "data": serializer.data
+            },
+            status=status.HTTP_200_OK
         )
