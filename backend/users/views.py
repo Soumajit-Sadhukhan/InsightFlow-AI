@@ -5,11 +5,13 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenRefreshView
 from drf_spectacular.utils import extend_schema
+
 
 # serializers
 from .serializers import RegisterSerializer
-from .serializers import LoginSerializer
+from .serializers import LoginSerializer, LogoutSerializer, ChangePasswordSerializer
 
 
 # Create your views here.
@@ -87,3 +89,48 @@ class ProfileView(APIView):
             },
             status=status.HTTP_200_OK
         )
+        
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = LogoutSerializer
+    
+    def post(self, request):
+        
+        serializer = LogoutSerializer(data=request.data)
+        
+        serializer.is_valid(raise_exception=True)
+        
+        serializer.save()
+        
+        return Response(
+            {
+                "status" : "success",
+                "message" : "Logout Successful"
+            },
+            status=status.HTTP_200_OK
+        )
+        
+class ChangePasswordView(APIView):
+    
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+    
+    def post(self, request):
+        
+        serializer = ChangePasswordSerializer(
+            data = request.data,
+            context= {"request": request}
+        )
+        
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response(
+            {
+                "status": "success",
+                "massage": "Password changed successfully"
+            },
+            status=status.HTTP_200_OK
+        )
+        
+        

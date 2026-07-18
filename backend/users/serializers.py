@@ -4,6 +4,7 @@ from .models import User
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
+
 import random
 
 #serializers convard json
@@ -60,8 +61,34 @@ class LoginSerializer(serializers.Serializer):
         return{
             "user": RegisterSerializer(user).data,
             "access": str(refresh.access_token),
-            "refesh": str(refresh),
+            "refresh": str(refresh),
         }
         
+        
+#logout
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
             
-            
+    def validate(self, attrs):
+        self.token = attrs["refresh"]
+        return attrs 
+    def save(self):
+        token = RefreshToken(self.token)
+        token.blacklist()   
+        
+ #chenge password       
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    
+    def validate(self, attrs):
+        user = self.context["request"].user
+        if not user.check_password(attrs["old_password"]):
+            raise serializers.ValidationError(
+                {"old_password": "Old Password is Incorrect"}
+            )
+        return attrs
+    def save(self):
+        user = self.context["request"].user
+        user.set_password(self.validated_data["new_password"])
+        user.save()
