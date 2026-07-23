@@ -11,7 +11,15 @@ from drf_spectacular.utils import extend_schema
 
 # serializers
 from .serializers import RegisterSerializer
-from .serializers import LoginSerializer, LogoutSerializer, ChangePasswordSerializer
+from .serializers import (
+    LoginSerializer, 
+    LogoutSerializer, 
+    ChangePasswordSerializer,
+    ForgotPasswordSerializer,
+    VerifyOTPSerializer,
+    ReserPasswordSerializer,
+    
+    )
 
 
 # Create your views here.
@@ -134,3 +142,59 @@ class ChangePasswordView(APIView):
         )
         
         
+class ForgotPasswordView(APIView):
+    serializer_class = ForgotPasswordSerializer
+    def post(self, requel):
+        
+        serializer = ForgotPasswordSerializer(
+            data=self.request.data
+        )
+        
+        serializer.is_valid(raise_exception=True)
+        
+        return Response(
+            {
+                "status": "success",
+                "message": "OTP sent successfully"
+            },
+            status=status.HTTP_200_OK
+        )
+        
+        
+class  VerifyOTPView(APIView):
+    serializer_class = VerifyOTPSerializer
+    
+    def post(self, request):
+        serializer = VerifyOTPSerializer(data=request.data)
+    
+        serializer.is_valid(raise_exception=True)
+    
+        return Response(
+            {
+            "status": "success",
+            "message": "OTP verified successfuly"
+            },
+            status=status.HTTP_200_OK
+        )
+        
+        
+class RestPasswordView(APIView):
+    
+    serializer_class = ReserPasswordSerializer
+    
+    def post(self, request):
+        
+        serializer = ReserPasswordSerializer(data=request.data)
+        
+        serializer.is_valid(raise_exception=True)
+        
+        serializer.save()
+        
+        return Response(
+            {
+                "status": "success",
+                "message": "Password reset successfully"
+            },
+            status=status.HTTP_200_OK
+        )
+            

@@ -61,6 +61,7 @@ class User(AbstractUser):
         null=True
     )
     
+    
     def __str__(self):
         return self.username
     
