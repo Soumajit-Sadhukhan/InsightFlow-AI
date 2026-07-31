@@ -29,4 +29,6 @@ urlpatterns = [
     path("api/auth/", include("users.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"),name="swagger-ui",), # for drf-spectacular
+    
+    path("api/projects/", include("projects.urls"))
 ]
